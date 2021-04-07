@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.its.mapper.TaskMapper"> 
+	<!-- 查询任务为ID为7的任务分配给了哪些人 -->
+	<select id="selectTaskEmployee" parameterType="int" resultMap="selectTaskEmployeeMap">
+		select * from task t,employee_task et,employee e 
+		where t.task_id = et.task_id 
+		and et.emp_id = e.id
+		and t.task_id = 7
+	</select>
+	<resultMap type="task" id="selectTaskEmployeeMap">
+		<id property="task_id" column="task_id"/>
+		<result property="task_name" column="task_name"/>
+		<result property="task_type" column="task_type"/>
+		<result property="task_description" column="task_description"/>
+		<result property="task_public_time" column="task_public_time"/>
+		<collection property="employeeList" ofType="employee">
+			<id property="id" column="id"/>
+			<result property="name" column="name"/>
+			<result property="entryTime" column="entryTime"/>
+			<result property="wage" column="wage"/>
+			<result property="bonus" column="bonus"/>
+		</collection>
+	</resultMap>
+</mapper>

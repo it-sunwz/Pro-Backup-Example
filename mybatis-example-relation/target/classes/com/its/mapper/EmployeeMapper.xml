@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.its.mapper.EmployeeMapper"> 
+
+	<select id="selectEmployeeById" parameterType="int" resultMap="workCardInEmployee">
+		select * from employee	where id = #{id}
+	</select>
+	<!-- 因为多表返回需要自定义返回数据 -->
+	<resultMap type="employee" id="workCardInEmployee">
+		<id property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="entryTime" column="entryTime"/>
+		<result property="wage" column="wage"/>
+		<result property="bonus" column="bonus"/>
+		<!-- 1v1 association关联字段，封装WordCard -->
+		<association 
+			property="workCard" 
+			column="id" 
+			javaType="workCard"
+			select="com.its.mapper.WorkCardMapper.selectWorkCardById">
+		</association>
+	</resultMap>
+	
+	<!-- 这种方式字段必须写全 -->
+	<select id="selectEmployeeById-2" parameterType="int" resultMap="workCardInEmployee-2">
+		select emp.*,wc.* from employee as emp,workcard as wc
+		where emp.id = wc.id and emp.id =#{id}
+	</select>
+	<resultMap type="employee" id="workCardInEmployee-2">
+		<id property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="entryTime" column="entryTime"/>
+		<result property="wage" column="wage"/>
+		<result property="bonus" column="bonus"/>
+		<association  property="workCard"  javaType="workCard">
+			<id property="id" column="id"/>
+			<result property="cw_no" column="cw_no"/>
+			<result property="cw_attendance" column="cw_attendance"/>
+			<result property="cw_entertime" column="cw_entertime"/>
+		</association>
+	</resultMap>
+	
+	<!--  查询员工ID为1的员工的任务有哪些 -->
+	<select id="selectEmployeeTask" parameterType="int" resultMap="selectEmployeeTaskMap">
+		select * from employee e,employee_task et,task t
+		where et.emp_id = e.id 
+		and et.task_id = t.task_id 
+		and e.id = 1
+	</select>
+	<resultMap type="employee" id="selectEmployeeTaskMap" >
+		<id property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="entryTime" column="entryTime"/>
+		<result property="wage" column="wage"/>
+		<result property="bonus" column="bonus"/>
+		<collection property="taskList" ofType="task">
+			<id property="task_id" column="task_id"/>
+			<result property="task_name" column="task_name"/>
+			<result property="task_type" column="task_type"/>
+			<result property="task_description" column="task_description"/>
+			<result property="task_public_time" column="task_public_time"/>
+		</collection>
+	</resultMap>
+</mapper>

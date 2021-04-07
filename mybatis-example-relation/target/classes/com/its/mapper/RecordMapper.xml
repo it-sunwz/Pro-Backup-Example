@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.its.mapper.RecordMapper"> 
+	<!-- WorkCardMapper引用 -->
+	<select id="selectRecordByWorkcard_id" parameterType="int" resultType="record">
+		select * from  record where workcard_id = #{workcard_id}
+	</select>
+	
+	<!-- 通过记录ID查询记录信息和工卡信息 - 记录Mapper -->
+	<select id="selectRecordAndWorkCard" parameterType="int" resultMap="srac">
+		select * from record where record_id =#{record_id}
+	</select>
+	<resultMap type="reCord" id="srac">
+		<association property="workCard" column="workcard_id" javaType="workCard" select="com.its.mapper.WorkCardMapper.selectWorkCardById"></association>
+	</resultMap>
+	
+	<!-- 关于日期操作 -->
+	<select id="selectDate" parameterType="Map" resultType="record">
+		select * from record where record_time between #{start_date} and #{end_date}
+	</select>
+	
+	
+</mapper>
